@@ -254,4 +254,29 @@ public class DemoBase {
 	public static String getPayeeInfo(Map<String, String> payeeInfoMap,String encoding) {
 		return formInfoBase64(payeeInfoMap,encoding);
 	}
+	/**
+	 * 解析返回报文中的payeeInfo域，敏感信息加密时使用：<br>
+	 * @param payeeInfo<br>
+	 * @param encoding<br>
+	 * @return
+	 */
+	public static Map<String, String> parsePayeeInfoEnc(String payeeInfo, String encoding){
+		return parsePayerInfoEnc(payeeInfo, encoding);
+	}
+
+	/**
+	 * 解析返回报文的payerInfo域，敏感信息加密时使用：<br>
+	 * @param payerInfo<br>
+	 * @param encoding<br>
+	 * @return
+	 */
+	public static Map<String, String> parsePayerInfoEnc(String payerInfo, String encoding){
+		payerInfo = AcpService.decryptData(payerInfo, encoding);
+		Map<String, String> payerInfoMap;
+		payerInfoMap = SDKUtil.convertResultStringToMap(payerInfo);
+		return payerInfoMap;
+	}
+
+
+
 }
