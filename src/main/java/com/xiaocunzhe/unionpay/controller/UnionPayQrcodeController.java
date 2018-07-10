@@ -46,9 +46,6 @@ public class UnionPayQrcodeController {
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "qrCode", value = "二维码链接", required = true, paramType = "form", dataType = "String")
-            /**@ApiImplicitParam( name="dictType",value="字典类型",required=true,paramType="form",dataType="String"),
-             @ApiImplicitParam( name="dictName",value="字典名称",required=true,paramType="form",dataType="String"),
-             @ApiImplicitParam( name="state",value="字典状态",required=true,paramType="form",dataType="String"),*/
     })
     @RequestMapping(value = "/queryOrderInfo", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> queryOrderInfo(@ApiIgnore String qrCode) {

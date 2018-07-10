@@ -10,13 +10,18 @@ import com.jpay.unionpay.SDKUtil;
 import com.jpay.unionpay.UnionPayApi;
 import com.xiaocunzhe.util.AcpServiceCustomer;
 import com.xiaocunzhe.util.UnionPayCustomerApiConfig;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,71 +121,75 @@ public class UnionPayController {
 
     /**
      * 查询开通状态
-     * @param req
-     * @param resp
+     *
      * @throws IOException
      */
-    @RequestMapping("/tokenOpenQuery")
-    public void tokenOpenQuery(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        String orderId = "1531108596479";
-        try {
-            Map<String, String> reqData = UnionPayCustomerApiConfig.builder()
-                    .setTxnType("78")
-                    .setTxnSubType("02")
-                    .setBizType("000902")
-                    .setChannelType("07") //渠道类型，07-PC，08-手机
-                    .setMerId(merId)
-                    .setAccessType("0")
-                    .setOrderId(orderId)//商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则，重新产生，不同于原消费
-                    .setTxnTime(DateKit.toStr(new Date(), DateKit.UnionTimeStampPattern))//订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
-                    .createMap("");
-            String requestBackUrl = SDKConfig.getConfig().getBackRequestUrl();
-            //交易请求url从配置文件读取对应属性文件acp_sdk.properties中的 acpsdk.backTransUrl
-            Map<String, String> rspData = AcpServiceCustomer.post(reqData,requestBackUrl,DemoBase.encoding);
-            StringBuffer parseStr = new StringBuffer("");
-            if (!rspData.isEmpty()) {
-                if (AcpService.validate(rspData, DemoBase.encoding)) {
-                    logger.info("验证签名成功");
-                    String respCode = rspData.get("respCode");
-                    if (("00").equals(respCode)) {
-                        //成功
-                        parseStr.append("<br>解析敏感信息加密信息如下（如果有）:<br>");
-                        String customerInfo = rspData.get("customerInfo");
-                        if (null != customerInfo) {
-                            Map<String, String> cm = AcpService.parseCustomerInfo(customerInfo, "UTF-8");
-                            parseStr.append("customerInfo明文: " + cm + "<br>");
-                        }
-                        String an = rspData.get("accNo");
-                        if (null != an) {
-                            an = AcpService.decryptData(an, "UTF-8");
-                            parseStr.append("accNo明文: " + an);
-                        }
-                    } else {
-                        //其他应答码为失败请排查原因或做失败处理
+    @ApiOperation(value = "查询开通状态", notes = "查询开通状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "orderId", value = "订单号", required = true, paramType = "form", dataType = "String")
+    })
+    @RequestMapping(value = "/tokenOpenQuery", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, String>> tokenOpenQuery(@ApiIgnore String orderId) throws IOException {
+        Map<String, String> reqData = UnionPayCustomerApiConfig.builder()
+                .setTxnType("78")
+                .setTxnSubType("02")
+                .setBizType("000902")
+                .setChannelType("07") //渠道类型，07-PC，08-手机
+                .setMerId(merId)
+                .setAccessType("0")
+                .setOrderId(orderId)//商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则，重新产生，不同于原消费
+                .setTxnTime(DateKit.toStr(new Date(), DateKit.UnionTimeStampPattern))//订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+                .createMap("");
+        String requestBackUrl = SDKConfig.getConfig().getBackRequestUrl();
+        //交易请求url从配置文件读取对应属性文件acp_sdk.properties中的 acpsdk.backTransUrl
+        Map<String, String> rspData = AcpServiceCustomer.post(reqData, requestBackUrl, DemoBase.encoding);
+        StringBuffer parseStr = new StringBuffer("");
+        if (!rspData.isEmpty()) {
+            if (AcpService.validate(rspData, DemoBase.encoding)) {
+                logger.info("验证签名成功");
+                String respCode = rspData.get("respCode");
+                if (("00").equals(respCode)) {
+                    //成功
+                    parseStr.append("<br>解析敏感信息加密信息如下（如果有）:<br>");
+                    String customerInfo = rspData.get("customerInfo");
+                    if (null != customerInfo) {
+                        Map<String, String> cm = AcpService.parseCustomerInfo(customerInfo, "UTF-8");
+                        parseStr.append("customerInfo明文: " + cm + "<br>");
+                    }
+                    String an = rspData.get("accNo");
+                    if (null != an) {
+                        an = AcpService.decryptData(an, "UTF-8");
+                        parseStr.append("accNo明文: " + an);
                     }
                 } else {
-                    logger.error("验证签名失败");
-                    // 检查验证签名失败的原因
+                    //其他应答码为失败请排查原因或做失败处理
                 }
             } else {
-                //未返回正确的http状态
-                logger.error("未获取到返回报文或返回http状态码非200");
+                logger.error("验证签名失败");
+                // 检查验证签名失败的原因
             }
-            String reqMessage = getHtmlResult(reqData);
-            String rspMessage = getHtmlResult(rspData);
-            resp.getWriter().write("</br>请求报文:<br/>" + reqMessage + "<br/>" + "应答报文:</br>" + rspMessage + parseStr);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            //未返回正确的http状态
+            logger.error("未获取到返回报文或返回http状态码非200");
         }
+
+
+        return ResponseEntity.ok(rspData);
     }
 
-    @GetMapping("/DeleteToken")
-    public  void DeleteToken( HttpServletResponse resp) throws IOException {
-        String token="6235240000020851024";
-        String orderId="1531108596479";
-        String txnTime="20180709115636";
+
+    @ApiOperation(value = "解除绑定", notes = "解除绑定")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "token", value = "支付token", required = true, paramType = "form", dataType = "String"),
+            @ApiImplicitParam(
+                    name = "orderId", value = "订单号", required = true, paramType = "form", dataType = "String"),
+            @ApiImplicitParam(
+                    name = "txnTime", value = "订单发送时间", required = true, paramType = "form", dataType = "String")
+    })
+    @RequestMapping(value = "/DeleteToken", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, String>> DeleteToken(@ApiIgnore String token, @ApiIgnore String orderId, @ApiIgnore String txnTime) {
         Map<String, String> reqData = UnionPayCustomerApiConfig.builder()
                 .setTxnType("74")
                 .setTxnSubType("01")
@@ -190,39 +199,34 @@ public class UnionPayController {
                 .setAccessType("0")
                 .setOrderId(orderId)//商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则，重新产生，不同于原消费
                 .setTxnTime(txnTime)//订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
-                .setTokenPayData("{token="+token+"&trId=62000000001}")
-                .createMap("D:/certs/acp_test_sign.pfx");       				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+                .setTokenPayData("{token=" + token + "&trId=62000000001}")
+                .createMap("D:/certs/acp_test_sign.pfx");                       //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
         /**对请求参数进行签名并发送http post请求，接收同步应答报文**/
-        String requestBackUrl = SDKConfig.getConfig().getBackRequestUrl();   			//交易请求url从配置文件读取对应属性文件acp_sdk.properties中的 acpsdk.backTransUrl
-        Map<String, String> rspData = AcpServiceCustomer.post(reqData,requestBackUrl,DemoBase.encoding); //发送请求报文并接受同步应答（默认连接超时时间30秒，读取返回结果超时时间30秒）;这里调用signData之后，调用submitUrl之前不能对submitFromData中的键值对做任何修改，如果修改会导致验签不通过
+        String requestBackUrl = SDKConfig.getConfig().getBackRequestUrl();            //交易请求url从配置文件读取对应属性文件acp_sdk.properties中的 acpsdk.backTransUrl
+        Map<String, String> rspData = AcpServiceCustomer.post(reqData, requestBackUrl, DemoBase.encoding); //发送请求报文并接受同步应答（默认连接超时时间30秒，读取返回结果超时时间30秒）;这里调用signData之后，调用submitUrl之前不能对submitFromData中的键值对做任何修改，如果修改会导致验签不通过
         /**对应答码的处理，请根据您的业务逻辑来编写程序,以下应答码处理逻辑仅供参考------------->**/
         //应答码规范参考open.unionpay.com帮助中心 下载  产品接口规范  《平台接入接口规范-第5部分-附录》
-        if(!rspData.isEmpty()){
-            if(AcpService.validate(rspData, DemoBase.encoding)){
+        if (!rspData.isEmpty()) {
+            if (AcpService.validate(rspData, DemoBase.encoding)) {
                 LogUtil.writeLog("验证签名成功");
-                String respCode = rspData.get("respCode") ;
-                if(("00").equals(respCode)){
+                String respCode = rspData.get("respCode");
+                if (("00").equals(respCode)) {
                     //成功
                     //TODO
-                }else{
+                } else {
                     //其他应答码为失败请排查原因或做失败处理
                     //TODO
                 }
-            }else{
+            } else {
                 LogUtil.writeErrorLog("验证签名失败");
                 //TODO 检查验证签名失败的原因
             }
-        }else{
+        } else {
             //未返回正确的http状态
             LogUtil.writeErrorLog("未获取到返回报文或返回http状态码非200");
         }
-        String reqMessage = DemoBase.genHtmlResult(reqData);
-        String rspMessage = DemoBase.genHtmlResult(rspData);
-        resp.getWriter().write("请求报文:<br/>"+reqMessage+"<br/>" + "应答报文:</br>"+rspMessage+"");
+        return ResponseEntity.ok(rspData);
     }
-
-
-
 
 
     /**
