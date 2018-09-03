@@ -18,8 +18,8 @@ public class UnionpayApplication {
         return new StartupRunner();
     }
 
-    @Bean
-    public TaskRunner taskRunner(){
-        return new TaskRunner();
-    }
+//    @Bean
+//    public TaskRunner taskRunner(){
+//        return new TaskRunner();
+//    }
 }

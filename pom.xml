@@ -109,30 +109,63 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.28</version>
         </dependency>
+
+        <!--e签宝 begin -->
         <dependency>
             <groupId>com.esign</groupId>
             <artifactId>tech-sdk</artifactId>
             <version>2.1.5</version>
         </dependency>
+
+
         <dependency>
             <groupId>com.esign</groupId>
             <artifactId>tgtext</artifactId>
             <version>3.2.0</version>
         </dependency>
+
+
         <dependency>
             <groupId>com.esign</groupId>
             <artifactId>utils</artifactId>
             <version>3.0.6</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.esign</groupId>
+            <artifactId>ext-sdk-fonts</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.esign</groupId>
             <artifactId>smUtil</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--e签宝 end -->
+
         <dependency>
-            <groupId>com.esign</groupId>
-            <artifactId>ext-sdk-fonts</artifactId>
-            <version>1.0.2</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>26.0-jre</version>
         </dependency>
     </dependencies>
 
