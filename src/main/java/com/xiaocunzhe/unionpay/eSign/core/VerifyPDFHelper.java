@@ -1,4 +1,4 @@
-package com.xiaocunzhe.eSign.core;
+package com.xiaocunzhe.unionpay.eSign.core;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -8,8 +8,8 @@ import com.timevale.esign.sdk.tech.bean.SignatureBean;
 import com.timevale.esign.sdk.tech.bean.result.VerifyPdfResult;
 import com.timevale.esign.sdk.tech.service.SignService;
 import com.timevale.esign.sdk.tech.v3.client.ServiceClient;
+import com.xiaocunzhe.esign.exception.DemoException;
 
-import cn.hangzhou.demo.exception.DemoException;
 
 /***
  * @Description: 签署后PDF文件验签辅助类
@@ -31,7 +31,7 @@ public class VerifyPDFHelper {
 	 * @param signedPdfPath
 	 * @throws DemoException 
 	 */
-	public static void doLocalVerifyPdf(ServiceClient serviceClient, String signedPdfPath) throws DemoException{
+	public static void doLocalVerifyPdf(ServiceClient serviceClient, String signedPdfPath) throws DemoException {
 		SignService signService = serviceClient.signService();		
 		VerifyPdfResult verifyPdfResult = signService.localVerifyPdf(signedPdfPath);
 		

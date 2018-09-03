@@ -6,7 +6,7 @@ import com.timevale.tech.sdk.bean.HttpConnectionConfig;
 import com.timevale.tech.sdk.bean.ProjectConfig;
 import com.timevale.tech.sdk.bean.SignatureConfig;
 import com.timevale.tech.sdk.constants.AlgorithmType;
-import com.xiaocunzhe.esign.constant.DemoConfig;
+import com.xiaocunzhe.unionpay.eSign.constant.DemoConfig;
 import com.xiaocunzhe.esign.exception.DemoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

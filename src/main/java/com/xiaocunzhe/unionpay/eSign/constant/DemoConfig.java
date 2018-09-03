@@ -1,4 +1,4 @@
-package com.xiaocunzhe.esign.constant;
+package com.xiaocunzhe.unionpay.eSign.constant;
 
 import com.timevale.tech.sdk.constants.AlgorithmType;
 import com.timevale.tech.sdk.constants.HttpType;

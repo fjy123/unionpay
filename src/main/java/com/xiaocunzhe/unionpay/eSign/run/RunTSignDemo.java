@@ -1,4 +1,4 @@
-package com.xiaocunzhe.esign.run;
+package com.xiaocunzhe.unionpay.eSign.run;
 
 import java.io.File;
 
@@ -15,16 +15,16 @@ import com.timevale.esign.sdk.tech.impl.constants.LegalAreaType;
 import com.timevale.esign.sdk.tech.impl.constants.OrganRegType;
 import com.timevale.esign.sdk.tech.impl.constants.SignType;
 import com.timevale.esign.sdk.tech.v3.client.ServiceClient;
-import com.xiaocunzhe.esign.constant.DemoConfig;
+import com.xiaocunzhe.unionpay.eSign.constant.DemoConfig;
 import com.xiaocunzhe.esign.core.AccountHelper;
 import com.xiaocunzhe.esign.core.FileHelper;
 import com.xiaocunzhe.esign.core.InitClientHelper;
 import com.xiaocunzhe.esign.core.SealHelper;
 import com.xiaocunzhe.esign.core.SignHelper;
-import com.xiaocunzhe.esign.core.VerifyPDFHelper;
 import com.xiaocunzhe.esign.exception.DemoException;
 import com.xiaocunzhe.esign.util.DemoMessage;
 import com.xiaocunzhe.esign.util.StringTools;
+import com.xiaocunzhe.unionpay.eSign.core.VerifyPDFHelper;
 
 
 /***
@@ -213,7 +213,7 @@ public class RunTSignDemo {
 		SignPDFFileBean signPDFFileBean = SignHelper.doSetSignPDFFileBean(srcPdfPath, outPdfPath, signLogFileName,
 				ownerPWD);
 		// 签章类型,Single-单页签章、Multi-多页签章、Edges-骑缝章、Key-关键字签章
-		SignType signType = SignType.Key;
+		SignType signType = SignType.Single;
 
 		// 签署页码,单页签署时页码格式为"1";若为多页签署时，支持页码格式"1-3,5,8"
 		String page = "1";
